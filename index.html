@@ -1,0 +1,1990 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FURIA Fan Analytics</title>
+    <style>
+        :root {
+            --furia-blue: #0071bc;
+            --furia-dark: #000000;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --background-light: #f6f8fa;
+            --background-dark: #1e1e2e;
+            --accent-blue: #0071bc;
+            --accent-light: #e2f0fd;
+            --border-light: #e1e4e8;
+            --card-bg: #ffffff;
+            --success: #2ea44f;
+            --warning: #f7b731;
+            --danger: #d73a49;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--furia-dark);
+            color: var(--text-light);
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        /* Sidebar */
+        .logo-container {
+            padding: 0 20px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--furia-blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 22px;
+            margin-right: 10px;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-item i {
+            margin-right: 15px;
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Dashboard Content */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background-color: var(--furia-blue);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        /* Cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--accent-light);
+            color: var(--accent-blue);
+            font-size: 22px;
+        }
+
+        .card-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .card-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .trend {
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--danger);
+        }
+
+        .trend i {
+            margin-right: 3px;
+        }
+
+        /* Data Tables */
+        .data-section {
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .table-container {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        th {
+            background-color: var(--background-light);
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        tbody tr:hover {
+            background-color: var(--accent-light);
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: rgba(46, 164, 79, 0.1);
+            color: var(--success);
+        }
+
+        .status-inactive {
+            background-color: rgba(215, 58, 73, 0.1);
+            color: var(--danger);
+        }
+
+        /* Charts */
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 250px;
+            background-color: var(--accent-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--furia-blue);
+            font-weight: 500;
+        }
+
+        /* Fan Profile Section */
+        .fan-profile {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .profile-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: var(--accent-light);
+            background-image: url('https://i.imgur.com/placeholder.jpg');
+            background-size: cover;
+            margin-bottom: 15px;
+            border: 4px solid var(--accent-light);
+        }
+
+        .profile-name {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .profile-tag {
+            background-color: var(--furia-blue);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        .profile-stats {
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .profile-social {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .social-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--accent-light);
+            color: var(--furia-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .profile-bio {
+            background-color: var(--accent-light);
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .profile-actions {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Profile Detail Card */
+        .profile-details {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+
+        .detail-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 20px;
+        }
+
+        .detail-tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .detail-tab.active {
+            color: var(--furia-blue);
+        }
+
+        .detail-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--furia-blue);
+        }
+
+        .detail-content {
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            margin-bottom: 15px;
+        }
+
+        .detail-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tag {
+            background-color: var(--accent-light);
+            color: var(--furia-blue);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--accent-light);
+            color: var(--furia-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .activity-title {
+            font-weight: 500;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .activity-text {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .activity-image {
+            width: 100%;
+            height: 180px;
+            border-radius: 8px;
+            background-color: var(--accent-light);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--furia-blue);
+            font-weight: 500;
+        }
+
+        .activity-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .activity-action {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .activity-action i {
+            margin-right: 5px;
+        }
+
+        /* Fan Segments */
+        .fan-segments {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .segment-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .segment-header {
+            background-color: var(--furia-dark);
+            color: white;
+            padding: 15px;
+        }
+
+        .segment-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .segment-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .segment-content {
+            padding: 15px;
+        }
+
+        .segment-description {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .segment-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .segment-tag {
+            background-color: var(--accent-light);
+            color: var(--furia-blue);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .segment-bar {
+            height: 8px;
+            background-color: var(--accent-light);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .segment-fill {
+            height: 100%;
+            background-color: var(--furia-blue);
+            border-radius: 4px;
+        }
+
+        .segment-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+
+            .fan-profile {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 20px 0;
+            }
+
+            .sidebar .logo-text,
+            .sidebar .menu-text {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+            }
+
+            .logo-container {
+                justify-content: center;
+            }
+
+            .logo-icon {
+                margin-right: 0;
+            }
+
+            .menu-item {
+                justify-content: center;
+            }
+
+            .menu-item i {
+                margin-right: 0;
+            }
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            width: 600px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            cursor: pointer;
+            font-size: 22px;
+            color: #666;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--furia-blue);
+            box-shadow: 0 0 0 3px rgba(0, 113, 188, 0.2);
+        }
+
+        /* Insights Section */
+        .insight-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--furia-blue);
+        }
+
+        .insight-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .insight-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .insight-date {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .insight-content {
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .insight-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo-container">
+                <div class="logo">
+                    <div class="logo-icon">F</div>
+                    <div class="logo-text">FURIA Fan</div>
+                </div>
+            </div>
+
+            <ul class="menu">
+                <li class="menu-item active" onclick="showPage('dashboard')">
+                    <i>📊</i>
+                    <span class="menu-text">Dashboard</span>
+                </li>
+                <li class="menu-item" onclick="showPage('fan-profiles')">
+                    <i>👥</i>
+                    <span class="menu-text">Perfis de Fãs</span>
+                </li>
+                <li class="menu-item" onclick="showPage('segments')">
+                    <i>🔍</i>
+                    <span class="menu-text">Segmentação</span>
+                </li>
+                <li class="menu-item" onclick="showPage('campaign')">
+                    <i>📣</i>
+                    <span class="menu-text">Campanhas</span>
+                </li>
+                <li class="menu-item" onclick="showPage('insights')">
+                    <i>💡</i>
+                    <span class="menu-text">Insights</span>
+                </li>
+                <li class="menu-item" onclick="showPage('settings')">
+                    <i>⚙️</i>
+                    <span class="menu-text">Configurações</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Page -->
+            <div class="page" id="dashboard">
+                <div class="page-header">
+                    <h1 class="page-title">Dashboard de Fãs</h1>
+                    <div class="action-buttons">
+                        <button class="btn" onclick="openFilterModal()"><i>🔍</i> Filtrar</button>
+                        <button class="btn"><i>📊</i> Exportar</button>
+                    </div>
+                </div>
+
+                <!-- Overview Cards -->
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Total de Fãs</div>
+                            <div class="card-icon">👥</div>
+                        </div>
+                        <div class="card-value">245,873</div>
+                        <div class="card-label">Fãs registrados</div>
+                        <div class="trend trend-up"><i>↑</i> 12.5% neste mês</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Engajamento Médio</div>
+                            <div class="card-icon">🔥</div>
+                        </div>
+                        <div class="card-value">78%</div>
+                        <div class="card-label">Taxa de interação</div>
+                        <div class="trend trend-up"><i>↑</i> 5.2% neste mês</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Novos Fãs</div>
+                            <div class="card-icon">✨</div>
+                        </div>
+                        <div class="card-value">1,482</div>
+                        <div class="card-label">Esta semana</div>
+                        <div class="trend trend-up"><i>↑</i> 8.7% vs semana anterior</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Compras</div>
+                            <div class="card-icon">🛒</div>
+                        </div>
+                        <div class="card-value">R$ 147.5K</div>
+                        <div class="card-label">Este mês</div>
+                        <div class="trend trend-down"><i>↓</i> 3.1% vs mês anterior</div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">Crescimento de Fãs</div>
+                            <div>
+                                <select>
+                                    <option>Últimos 30 dias</option>
+                                    <option>Últimos 90 dias</option>
+                                    <option>Este ano</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-placeholder">Gráfico de Crescimento de Fãs</div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">Engajamento por Canal</div>
+                            <div>
+                                <select>
+                                    <option>Todos os canais</option>
+                                    <option>Redes sociais</option>
+                                    <option>Site e app</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-placeholder">Gráfico de Engajamento por Canal</div>
+                    </div>
+                </div>
+
+                <!-- Top Fans Table -->
+                <div class="data-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Top Fãs da Semana</h2>
+                        <button class="btn">Ver Todos</button>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fã</th>
+                                    <th>Segmento</th>
+                                    <th>Engajamento</th>
+                                    <th>Pontos</th>
+                                    <th>Última Atividade</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr onclick="showFanProfile('fan1')">
+                                    <td>
+                                        <div style="display: flex; align-items: center;">
+                                            <div style="width: 32px; height: 32px; border-radius: 50%; background-color: var(--accent-light); margin-right: 10px;"></div>
+                                            <div>Bruno Menezes</div>
+                                        </div>
+                                    </td>
+                                    <td>Super Fã</td>
+                                    <td>98%</td>
+                                    <td>18,452</td>
+                                    <td>Hoje, 09:45</td>
+                                    <td><span class="status status-active">Ativo</span></td>
+                                </tr>
+                                <tr onclick="showFanProfile('fan2')">
+                                    <td>
+                                        <div style="display: flex; align-items: center;">
+                                            <div style="width: 32px; height: 32px; border-radius: 50%; background-color: var(--accent-light); margin-right: 10px;"></div>
+                                            <div>Carla Souza</div>
+                                        </div>
+                                    </td>
+                                    <td>Engajado</td>
+                                    <td>92%</td>
+                                    <td>15,271</td>
+                                    <td>Ontem, 18:30</td>
+                                    <td><span class="status status-active">Ativo</span></td>
+                                </tr>
+                                <tr onclick="showFanProfile('fan3')">
+                                    <td>
+                                        <div style="display: flex; align-items: center;">
+                                            <div style="width: 32px; height: 32px; border-radius: 50%; background-color: var(--accent-light); margin-right: 10px;"></div>
+                                            <div>Felipe Costa</div>
+                                        </div>
+                                    </td>
+                                    <td>Comprador VIP</td>
+                                    <td>86%</td>
+                                    <td>14,887</td>
+                                    <td>Hoje, 11:20</td>
+                                    <td><span class="status status-active">Ativo</span></td>
+                                </tr>
+                                <tr onclick="showFanProfile('fan4')">
+                                    <td>
+                                        <div style="display: flex; align-items: center;">
+                                            <div style="width: 32px; height: 32px; border-radius: 50%; background-color: var(--accent-light); margin-right: 10px;"></div>
+                                            <div>Ana Luiza Silva</div>
+                                        </div>
+                                    </td>
+                                    <td>Criador de Conteúdo</td>
+                                    <td>84%</td>
+                                    <td>13,945</td>
+                                    <td>Ontem, 20:15</td>
+                                    <td><span class="status status-active">Ativo</span></td>
+                                </tr>
+                                <tr onclick="showFanProfile('fan5')">
+                                    <td>
+                                        <div style="display: flex; align-items: center;">
+                                            <div style="width: 32px; height: 32px; border-radius: 50%; background-color: var(--accent-light); margin-right: 10px;"></div>
+                                            <div>Rodrigo Ferreira</div>
+                                        </div>
+                                    </td>
+                                    <td>Recente</td>
+                                    <td>79%</td>
+                                    <td>8,723</td>
+                                    <td>Hoje, 08:05</td>
+                                    <td><span class="status status-active">Ativo</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Segments Overview -->
+                <div class="data-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Segmentos de Fãs</h2>
+                        <button class="btn" onclick="showPage('segments')">Análise Completa</button>
+                    </div>
+
+                    <div class="fan-segments">
+                        <div class="segment-card">
+                            <div class="segment-header">
+                                <div class="segment-title">Super Fãs</div>
+                                <div class="segment-stats">
+                                    <div>12,485 fãs</div>
+                                    <div>5.1% do total</div>
+                                </div>
+                            </div>
+                            <div class="segment-content">
+                                <div class="segment-description">Fãs dedicados que nunca perdem uma partida e possuem alto engajamento em todos os canais.</div>
+                                <div class="segment-tags">
+                                    <div class="segment-tag">Alta fidelidade</div>
+                                    <div class="segment-tag">Alto engajamento</div>
+                                    <div class="segment-tag">Compradores frequentes</div>
+                                </div>
+                                <div class="segment-bar">
+                                    <div class="segment-fill" style="width: 85%;"></div>
+                                </div>
+                                <div class="segment-label">
+                                    <div>Engajamento</div>
+                                    <div>85%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="segment-card">
+                            <div class="segment-header">
+                                <div class="segment-title">Engajados</div>
+                                <div class="segment-stats">
+                                    <div>48,923 fãs</div>
+                                    <div>19.9% do total</div>
+                                </div>
+                            </div>
+                            <div class="segment-content">
+                                <div class="segment-description">Fãs ativos que acompanham regularmente e interagem com o conteúdo da FURIA.</div>
+                                <div class="segment-tags">
+                                    <div class="segment-tag">Engajamento médio-alto</div>
+                                    <div class="segment-tag">Compradores ocasionais</div>
+                                </div>
+                                <div class="segment-bar">
+                                    <div class="segment-fill" style="width: 68%;"></div>
+                                </div>
+                                <div class="segment-label">
+                                    <div>Engajamento</div>
+                                    <div>68%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="segment-card">
+                            <div class="segment-header">
+                                <div class="segment-title">Compradores VIP</div>
+                                <div class="segment-stats">
+                                    <div>31,752 fãs</div>
+                                    <div>12.9% do total</div>
+                                </div>
+                            </div>
+                            <div class="segment-content">
+                                <div class="segment-description">Fãs que compram produtos oficiais e ingressos com frequência, mesmo com engajamento variável.</div>
+                                <div class="segment-tags">
+                                    <div class="segment-tag">Alto valor</div>
+                                    <div class="segment-tag">Colecionadores</div>
+                                </div>
+                                <div class="segment-bar">
+                                    <div class="segment-fill" style="width: 75%;"></div>
+                                </div>
+                                <div class="segment-label">
+                                    <div>Engajamento</div>
+                                    <div>75%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="segment-card">
+                            <div class="segment-header">
+                                <div class="segment-title">Criadores de Conteúdo</div>
+                                <div class="segment-stats">
+                                    <div>8,371 fãs</div>
+                                    <div>3.4% do total</div>
+                                </div>
+                            </div>
+                            <div class="segment-content">
+                                <div class="segment-description">Fãs que produzem conteúdo sobre a FURIA em suas próprias plataformas e redes sociais.</div>
+                                <div class="segment-tags">
+                                    <div class="segment-tag">Influenciadores</div>
+                                    <div class="segment-tag">Amplificadores</div>
+                                </div>
+                                <div class="segment-bar">
+                                    <div class="segment-fill" style="width: 92%;"></div>
+                                </div>
+                                <div class="segment-label">
+                                    <div>Engajamento</div>
+                                    <div>92%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fan Profiles Page -->
+            <div class="page" id="fan-profiles" style="display: none;">
+                <div class="page-header">
+                    <h1 class="page-title">Perfis de Fãs</h1>
+                    <div class="action-buttons">
+                        <button class="btn" onclick="openFilterModal()"><i>🔍</i> Filtrar</button>
+                        <button class="btn"><i>📊</i> Exportar</button>
+                    </div>
+                </div>
+
+                <!-- Individual Fan Profile -->
+                <div class="fan-profile">
+                    <div class="profile-card">
+                        <div class="profile-pic"></div>
+                        <h2 class="profile-name">Bruno Menezes</h2>
+                        <div class="profile-tag">Super Fã</div>
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">98%</div>
+                                <div class="stat-label">Engajamento</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">18K</div>
+                                <div class="stat-label">Pontos</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">R$3.2K</div>
+                                <div class="stat-label">Gasto Total</div>
+                            </div>
+                        </div>
+                        <div class="profile-social">
+                            <div class="social-icon">📷</div>
+                            <div class="social-icon">🐦</div>
+                            <div class="social-icon">📱</div>
+                            <div class="social-icon">📺</div>
+                        </div>
+                        <div class="profile-bio">
+                            "Fã da FURIA desde 2018, acompanho todas as partidas e eventos. Colecionador de itens oficiais e apaixonado por CS competitivo. Vamos FURIA! 🖤💙"
+                        </div>
+                        <div class="profile-actions">
+                            <button class="btn">Enviar Mensagem</button>
+                            <button class="btn">Ver Histórico</button>
+                        </div>
+                    </div>
+
+                    <div class="profile-details">
+                        <div class="detail-tabs">
+                            <div class="detail-tab active" onclick="switchTab(this, 'info')">Informações</div>
+                            <div class="detail-tab" onclick="switchTab(this, 'activity')">Atividades</div>
+                            <div class="detail-tab" onclick="switchTab(this, 'interactions')">Interações</div>
+                            <div class="detail-tab" onclick="switchTab(this, 'purchases')">Compras</div>
+                        </div>
+
+                        <div class="detail-content" id="info-content">
+                            <div class="detail-item">
+                                <div class="detail-label">E-mail</div>
+                                <div class="detail-value">bruno.menezes@email.com</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Telefone</div>
+                                <div class="detail-value">(11) 98765-4321</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Localização</div>
+                                <div class="detail-value">São Paulo, SP</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Idade</div>
+                                <div class="detail-value">27 anos</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Fã desde</div>
+                                <div class="detail-value">Março 2018</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Última visita</div>
+                                <div class="detail-value">Hoje, 09:45</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Redes Sociais</div>
+                                <div class="detail-value">
+                                    <div>Instagram: @bruno.mzs (8.2K seguidores)</div>
+                                    <div>Twitter: @brunofuria (1.5K seguidores)</div>
+                                    <div>YouTube: BrunoFuriaCS (3.8K inscritos)</div>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Interesses</div>
+                                <div class="detail-value">
+                                    <div class="tag-list">
+                                        <div class="tag">CS:GO</div>
+                                        <div class="tag">Competitivo</div>
+                                        <div class="tag">Colecionáveis</div>
+                                        <div class="tag">Streaming</div>
+                                        <div class="tag">Tecnologia</div>
+                                        <div class="tag">Equipamentos</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-content" id="activity-content" style="display: none;">
+                            <div class="activity-item">
+                                <div class="activity-icon">📱</div>
+                                <div class="activity-content">
+                                    <div class="activity-header">
+                                        <div class="activity-title">Postagem no Instagram</div>
+                                        <div class="activity-time">Hoje, 09:45</div>
+                                    </div>
+                                    <div class="activity-text">
+                                        "Pronto para mais uma vitória da @furiagg hoje! Vamos dominar esse Major! #FURIAcsgo #GoFURIA #MajorTime"
+                                    </div>
+                                    <div class="activity-image">
+                                        Imagem da postagem no Instagram
+                                    </div>
+                                    <div class="activity-actions">
+                                        <div class="activity-action"><i>👍</i> 342 curtidas</div>
+                                        <div class="activity-action"><i>💬</i> 53 comentários</div>
+                                        <div class="activity-action"><i>🔗</i> 28 compartilhamentos</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <div class="activity-icon">🎮</div>
+                                <div class="activity-content">
+                                    <div class="activity-header">
+                                        <div class="activity-title">Assistiu à partida</div>
+                                        <div class="activity-time">Ontem, 16:30</div>
+                                    </div>
+                                    <div class="activity-text">
+                                        Assistiu "FURIA vs Team Liquid" por 2 horas e 15 minutos
+                                    </div>
+                                    <div class="activity-actions">
+                                        <div class="activity-action"><i>💬</i> 24 comentários no chat</div>
+                                        <div class="activity-action"><i>🎁</i> 3 doações</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <div class="activity-icon">🛒</div>
+                                <div class="activity-content">
+                                    <div class="activity-header">
+                                        <div class="activity-title">Compra na loja</div>
+                                        <div class="activity-time">2 dias atrás</div>
+                                    </div>
+                                    <div class="activity-text">
+                                        Comprou "Camisa Oficial FURIA 2025" e 2 outros itens
+                                    </div>
+                                    <div class="activity-actions">
+                                        <div class="activity-action"><i>💰</i> R$ 529,90</div>
+                                        <div class="activity-action"><i>🏆</i> +500 pontos</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <div class="activity-icon">🎟️</div>
+                                <div class="activity-content">
+                                    <div class="activity-header">
+                                        <div class="activity-title">Compra de ingressos</div>
+                                        <div class="activity-time">1 semana atrás</div>
+                                    </div>
+                                    <div class="activity-text">
+                                        Comprou ingressos para "FURIA Championship Series - São Paulo"
+                                    </div>
+                                    <div class="activity-actions">
+                                        <div class="activity-action"><i>💰</i> R$ 345,00</div>
+                                        <div class="activity-action"><i>🏆</i> +350 pontos</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-content" id="interactions-content" style="display: none;">
+                            <div class="chart-placeholder" style="margin-bottom: 20px;">
+                                Gráfico de Interações nos Últimos 30 Dias
+                            </div>
+
+                            <div class="activity-item">
+                                <div class="activity-icon">📊</div>
+                                <div class="activity-content">
+                                    <div class="activity-header">
+                                        <div class="activity-title">Resumo de Interações</div>
+                                    </div>
+                                    <div class="activity-text">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+                                            <div>
+                                                <div style="font-weight: 500; margin-bottom: 5px;">Redes Sociais</div>
+                                                <div>Curtidas: 458</div>
+                                                <div>Comentários: 87</div>
+                                                <div>Compartilhamentos: 42</div>
+                                            </div>
+                                            <div>
+                                                <div style="font-weight: 500; margin-bottom: 5px;">Site e App</div>
+                                                <div>Visitas: 64</div>
+                                                <div>Tempo médio: 18 min</div>
+                                                <div>Páginas por visita: 8.3</div>
+                                            </div>
+                                            <div>
+                                                <div style="font-weight: 500; margin-bottom: 5px;">Transmissões</div>
+                                                <div>Assistidas: 12</div>
+                                                <div>Tempo total: 23h 45min</div>
+                                                <div>Chat: 145 mensagens</div>
+                                            </div>
+                                            <div>
+                                                <div style="font-weight: 500; margin-bottom: 5px;">Eventos</div>
+                                                <div>Participação: 3 eventos</div>
+                                                <div>Check-ins: 7</div>
+                                                <div>Fotos compartilhadas: 15</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <div class="activity-icon">📈</div>
+                                <div class="activity-content">
+                                    <div class="activity-header">
+                                        <div class="activity-title">Análise de Sentimento</div>
+                                    </div>
+                                    <div class="activity-text">
+                                        Baseado na análise de 234 interações recentes:
+                                    </div>
+                                    <div style="margin: 15px 0;">
+                                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                            <div style="width: 100px;">Positivo</div>
+                                            <div style="flex: 1; height: 8px; background-color: var(--accent-light); border-radius: 4px;">
+                                                <div style="width: 85%; height: 100%; background-color: var(--success); border-radius: 4px;"></div>
+                                            </div>
+                                            <div style="width: 40px; text-align: right;">85%</div>
+                                        </div>
+                                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                            <div style="width: 100px;">Neutro</div>
+                                            <div style="flex: 1; height: 8px; background-color: var(--accent-light); border-radius: 4px;">
+                                                <div style="width: 12%; height: 100%; background-color: var(--warning); border-radius: 4px;"></div>
+                                            </div>
+                                            <div style="width: 40px; text-align: right;">12%</div>
+                                        </div>
+                                        <div style="display: flex; align-items: center;">
+                                            <div style="width: 100px;">Negativo</div>
+                                            <div style="flex: 1; height: 8px; background-color: var(--accent-light); border-radius: 4px;">
+                                                <div style="width: 3%; height: 100%; background-color: var(--danger); border-radius: 4px;"></div>
+                                            </div>
+                                            <div style="width: 40px; text-align: right;">3%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <div class="activity-icon">🔍</div>
+                                <div class="activity-content">
+                                    <div class="activity-header">
+                                        <div class="activity-title">Tópicos de Interesse</div>
+                                    </div>
+                                    <div class="activity-text">
+                                        Baseado em análise de conteúdo e interações:
+                                    </div>
+                                    <div class="tag-list" style="margin-top: 10px;">
+                                        <div class="tag">CS Competitivo (42%)</div>
+                                        <div class="tag">Jogadores da FURIA (27%)</div>
+                                        <div class="tag">Equipamentos (15%)</div>
+                                        <div class="tag">Estratégias (8%)</div>
+                                        <div class="tag">Bastidores (5%)</div>
+                                        <div class="tag">Mercado de jogadores (3%)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-content" id="purchases-content" style="display: none;">
+                            <div class="chart-placeholder" style="margin-bottom: 20px;">
+                                Histórico de Compras (Últimos 12 meses)
+                            </div>
+
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Data</th>
+                                            <th>Item</th>
+                                            <th>Quantidade</th>
+                                            <th>Valor</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>23/04/2025</td>
+                                            <td>Camisa Oficial FURIA 2025</td>
+                                            <td>1</td>
+                                            <td>R$ 349,90</td>
+                                            <td><span class="status status-active">Entregue</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>23/04/2025</td>
+                                            <td>Mouse Pad FURIA XL</td>
+                                            <td>1</td>
+                                            <td>R$ 89,90</td>
+                                            <td><span class="status status-active">Entregue</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>23/04/2025</td>
+                                            <td>Bonés FURIA Limited Edition</td>
+                                            <td>1</td>
+                                            <td>R$ 90,10</td>
+                                            <td><span class="status status-active">Entregue</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>16/04/2025</td>
+                                            <td>Ingressos FURIA Championship</td>
+                                            <td>2</td>
+                                            <td>R$ 345,00</td>
+                                            <td><span class="status status-active">Confirmado</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>02/04/2025</td>
+                                            <td>Hoodie FURIA Black</td>
+                                            <td>1</td>
+                                            <td>R$ 279,90</td>
+                                            <td><span class="status status-active">Entregue</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>15/03/2025</td>
+                                            <td>Coleção Figurinhas FURIA</td>
+                                            <td>3</td>
+                                            <td>R$ 120,00</td>
+                                            <td><span class="status status-active">Entregue</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div style="margin-top: 20px;">
+                                <div style="font-weight: 600; margin-bottom: 10px;">Resumo de Compras</div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                    <div>
+                                        <div class="detail-label">Total gasto (12 meses)</div>
+                                        <div class="detail-value">R$ 3.245,80</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Valor médio por compra</div>
+                                        <div class="detail-value">R$ 270,48</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Frequência de compra</div>
+                                        <div class="detail-value">1.5 compras/mês</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Categoria preferida</div>
+                                        <div class="detail-value">Vestuário (65%)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Segments Page -->
+            <div class="page" id="segments" style="display: none;">
+                <div class="page-header">
+                    <h1 class="page-title">Segmentação de Fãs</h1>
+                    <div class="action-buttons">
+                        <button class="btn" onclick="openSegmentModal()"><i>➕</i> Novo Segmento</button>
+                        <button class="btn"><i>📊</i> Exportar</button>
+                    </div>
+                </div>
+
+                <div class="fan-segments">
+                    <div class="segment-card">
+                        <div class="segment-header">
+                            <div class="segment-title">Super Fãs</div>
+                            <div class="segment-stats">
+                                <div>12,485 fãs</div>
+                                <div>5.1% do total</div>
+                            </div>
+                        </div>
+                        <div class="segment-content">
+                            <div class="segment-description">Fãs dedicados que nunca perdem uma partida e possuem alto engajamento em todos os canais.</div>
+                            <div class="segment-tags">
+                                <div class="segment-tag">Alta fidelidade</div>
+                                <div class="segment-tag">Alto engajamento</div>
+                                <div class="segment-tag">Compradores frequentes</div>
+                            </div>
+                            <div class="segment-bar">
+                                <div class="segment-fill" style="width: 85%;"></div>
+                            </div>
+                            <div class="segment-label">
+                                <div>Engajamento</div>
+                                <div>85%</div>
+                            </div>
+                            <button class="btn" style="width: 100%; margin-top: 15px;">Ver Detalhes</button>
+                        </div>
+                    </div>
+
+                    <div class="segment-card">
+                        <div class="segment-header">
+                            <div class="segment-title">Engajados</div>
+                            <div class="segment-stats">
+                                <div>48,923 fãs</div>
+                                <div>19.9% do total</div>
+                            </div>
+                        </div>
+                        <div class="segment-content">
+                            <div class="segment-description">Fãs ativos que acompanham regularmente e interagem com o conteúdo da FURIA.</div>
+                            <div class="segment-tags">
+                                <div class="segment-tag">Engajamento médio-alto</div>
+                                <div class="segment-tag">Compradores ocasionais</div>
+                            </div>
+                            <div class="segment-bar">
+                                <div class="segment-fill" style="width: 68%;"></div>
+                            </div>
+                            <div class="segment-label">
+                                <div>Engajamento</div>
+                                <div>68%</div>
+                            </div>
+                            <button class="btn" style="width: 100%; margin-top: 15px;">Ver Detalhes</button>
+                        </div>
+                    </div>
+
+                    <div class="segment-card">
+                        <div class="segment-header">
+                            <div class="segment-title">Compradores VIP</div>
+                            <div class="segment-stats">
+                                <div>31,752 fãs</div>
+                                <div>12.9% do total</div>
+                            </div>
+                        </div>
+                        <div class="segment-content">
+                            <div class="segment-description">Fãs que compram produtos oficiais e ingressos com frequência, mesmo com engajamento variável.</div>
+                            <div class="segment-tags">
+                                <div class="segment-tag">Alto valor</div>
+                                <div class="segment-tag">Colecionadores</div>
+                            </div>
+                            <div class="segment-bar">
+                                <div class="segment-fill" style="width: 75%;"></div>
+                            </div>
+                            <div class="segment-label">
+                                <div>Engajamento</div>
+                                <div>75%</div>
+                            </div>
+                            <button class="btn" style="width: 100%; margin-top: 15px;">Ver Detalhes</button>
+                        </div>
+                    </div>
+
+                    <div class="segment-card">
+                        <div class="segment-header">
+                            <div class="segment-title">Criadores de Conteúdo</div>
+                            <div class="segment-stats">
+                                <div>8,371 fãs</div>
+                                <div>3.4% do total</div>
+                            </div>
+                        </div>
+                        <div class="segment-content">
+                            <div class="segment-description">Fãs que produzem conteúdo sobre a FURIA em suas próprias plataformas e redes sociais.</div>
+                            <div class="segment-tags">
+                                <div class="segment-tag">Influenciadores</div>
+                                <div class="segment-tag">Amplificadores</div>
+                            </div>
+                            <div class="segment-bar">
+                                <div class="segment-fill" style="width: 92%;"></div>
+                            </div>
+                            <div class="segment-label">
+                                <div>Engajamento</div>
+                                <div>92%</div>
+                            </div>
+                            <button class="btn" style="width: 100%; margin-top: 15px;">Ver Detalhes</button>
+                        </div>
+                    </div>
+
+                    <div class="segment-card">
+                        <div class="segment-header">
+                            <div class="segment-title">Recentes</div>
+                            <div class="segment-stats">
+                                <div>35,641 fãs</div>
+                                <div>14.5% do total</div>
+                            </div>
+                        </div>
+                        <div class="segment-content">
+                            <div class="segment-description">Fãs que começaram a seguir a FURIA nos últimos 3 meses, com potencial de crescimento.</div>
+                            <div class="segment-tags">
+                                <div class="segment-tag">Novos fãs</div>
+                                <div class="segment-tag">Potencial crescente</div>
+                            </div>
+                            <div class="segment-bar">
+                                <div class="segment-fill" style="width: 45%;"></div>
+                            </div>
+                            <div class="segment-label">
+                                <div>Engajamento</div>
+                                <div>45%</div>
+                            </div>
+                            <button class="btn" style="width: 100%; margin-top: 15px;">Ver Detalhes</button>
+                        </div>
+                    </div>
+
+                    <div class="segment-card">
+                        <div class="segment-header">
+                            <div class="segment-title">Ocasionais</div>
+                            <div class="segment-stats">
+                                <div>84,925 fãs</div>
+                                <div>34.6% do total</div>
+                            </div>
+                        </div>
+                        <div class="segment-content">
+                            <div class="segment-description">Fãs que seguem a FURIA de forma intermitente, geralmente durante grandes eventos ou torneios.</div>
+                            <div class="segment-tags">
+                                <div class="segment-tag">Engajamento baixo</div>
+                                <div class="segment-tag">Intermitentes</div>
+                            </div>
+                            <div class="segment-bar">
+                                <div class="segment-fill" style="width: 32%;"></div>
+                            </div>
+                            <div class="segment-label">
+                                <div>Engajamento</div>
+                                <div>32%</div>
+                            </div>
+                            <button class="btn" style="width: 100%; margin-top: 15px;">Ver Detalhes</button>
+                        </div>
+                    </div>
+
+                    <div class="segment-card">
+                        <div class="segment-header">
+                            <div class="segment-title">Inativos</div>
+                            <div class="segment-stats">
+                                <div>23,776 fãs</div>
+                                <div>9.7% do total</div>
+                            </div>
+                        </div>
+                        <div class="segment-content">
+                            <div class="segment-description">Fãs que já foram ativos mas não interagiram com a marca nos últimos 6 meses.</div>
+                            <div class="segment-tags">
+                                <div class="segment-tag">Sem atividade</div>
+                                <div class="segment-tag">Para reativação</div>
+                            </div>
+                            <div class="segment-bar">
+                                <div class="segment-fill" style="width: 10%;"></div>
+                            </div>
+                            <div class="segment-label">
+                                <div>Engajamento</div>
+                                <div>10%</div>
+                            </div>
+                            <button class="btn" style="width: 100%; margin-top: 15px;">Ver Detalhes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insights Page -->
+            <div class="page" id="insights" style="display: none;">
+                <div class="page-header">
+                    <h1 class="page-title">Insights de Fãs</h1>
+                    <div class="action-buttons">
+                        <button class="btn" onclick="openFilterModal()"><i>🔍</i> Filtrar</button>
+                        <button class="btn"><i>📊</i> Exportar</button>
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <div class="insight-title">Picos de Engajamento em Dias de Partida</div>
+                        <div class="insight-date">Gerado hoje</div>
+                    </div>
+                    <div class="insight-content">
+                        A análise dos dados mostra que o engajamento dos fãs aumenta em média 215% nos dias de partida competitiva. O pico de interações ocorre aproximadamente 2 horas antes do início da partida e se mantém elevado até 3 horas após o término. Este padrão é consistente entre todos os segmentos de fãs, mas é mais pronunciado entre os Super Fãs e Engajados.
+                        <br><br>
+                        <b>Recomendação:</b> Programar lançamentos de produtos e campanhas promocionais para coincidir com esses períodos de alta atividade, especialmente para a categoria de vestuário que apresenta a maior taxa de conversão.
+                    </div>
+                    <div class="insight-tags">
+                        <div class="tag">Engajamento</div>
+                        <div class="tag">Padrões de Comportamento</div>
+                        <div class="tag">Oportunidade de Marketing</div>
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <div class="insight-title">Crescimento de 32% na Base de Fãs Femininas</div>
+                        <div class="insight-date">2 dias atrás</div>
+                    </div>
+                    <div class="insight-content">
+                        Nos últimos 3 meses, identificamos um crescimento significativo de 32% na base de fãs femininas da FURIA. Este aumento é mais significativo na faixa etária de 18-24 anos e corresponde ao período após o anúncio da nova divisão feminina de CS. As interações deste segmento mostram maior atividade no Instagram e TikTok, com enfoque em conteúdo relacionado aos bastidores e à personalidade dos jogadores.
+                        <br><br>
+                        <b>Recomendação:</b> Desenvolver linhas de produtos direcionadas ao público feminino e aumentar a frequência de conteúdo sobre a equipe feminina nas plataformas onde esse público está mais ativo.
+                    </div>
+                    <div class="insight-tags">
+                        <div class="tag">Demografia</div>
+                        <div class="tag">Tendências</div>
+                        <div class="tag">Oportunidade de Produto</div>
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <div class="insight-title">Criadores de Conteúdo Geram 38% do Alcance Orgânico</div>
+                        <div class="insight-date">1 semana atrás</div>
+                    </div>
+                    <div class="insight-content">
+                        Embora representem apenas 3.4% da base de fãs, os Criadores de Conteúdo são responsáveis por aproximadamente 38% do alcance orgânico total da FURIA nas redes sociais. A análise de conteúdo mostra que vídeos de reações durante partidas e análises táticas são os formatos que geram maior engajamento para esses criadores.
+                        <br><br>
+                        <b>Recomendação:</b> Implementar um programa formal de embaixadores para criadores de conteúdo, oferecendo acesso exclusivo a jogadores e eventos em troca de conteúdo regular. Focar em facilitar a criação de conteúdo dos formatos mais populares.
+                    </div>
+                    <div class="insight-tags">
+                        <div class="tag">Amplificadores</div>
+                        <div class="tag">Alcance de Marca</div>
+                        <div class="tag">Estratégia de Conteúdo</div>
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <div class="insight-title">Correlação entre Compras e Vitórias</div>
+                        <div class="insight-date">2 semanas atrás</div>
+                    </div>
+                    <div class="insight-content">
+                        Há uma correlação significativa (r=0.78) entre vitórias da equipe em torneios importantes e vendas de produtos oficiais. As compras aumentam em média 85% nas 48 horas após uma vitória expressiva. Além disso, a duração desse efeito varia de acordo com a importância do torneio, chegando a 5 dias para vitórias em Majors.
+                        <br><br>
+                        <b>Recomendação:</b> Preparar campanhas de marketing "prontas para ativar" após vitórias importantes, com descontos especiais em produtos de alta margem. Automatizar emails personalizados para diferentes segmentos de fãs com ofertas relevantes para cada perfil.
+                    </div>
+                    <div class="insight-tags">
+                        <div class="tag">Comportamento de Compra</div>
+                        <div class="tag">Momento Oportuno</div>
+                        <div class="tag">Automação de Marketing</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Pages (Placeholders) -->
+            <div class="page" id="campaign" style="display: none;">
+                <div class="page-header">
+                    <h1 class="page-title">Campanhas</h1>
+                </div>
+                <div style="text-align: center; padding: 50px; color: #666;">
+                    Módulo de Campanhas - Em desenvolvimento
+                </div>
+            </div>
+
+            <div class="page" id="settings" style="display: none;">
+                <div class="page-header">
+                    <h1 class="page-title">Configurações</h1>
+                </div>
+                <div style="text-align: center; padding: 50px; color: #666;">
+                    Módulo de Configurações - Em desenvolvimento
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="filterModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Filtrar Dados</div>
+                <div class="modal-close" onclick="closeModal('filterModal')">×</div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Período</label>
+                    <select class="form-control">
+                        <option>Últimos 30 dias</option>
+                        <option>Últimos 90 dias</option>
+                        <option>Este ano</option>
+                        <option>Personalizado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Segmentos</label>
+                    <select class="form-control" multiple>
+                        <option selected>Super Fãs</option>
+                        <option selected>Engajados</option>
+                        <option selected>Compradores VIP</option>
+                        <option selected>Criadores de Conteúdo</option>
+                        <option selected>Recentes</option>
+                        <option selected>Ocasionais</option>
+                        <option>Inativos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Faixa Etária</label>
+                    <select class="form-control">
+                        <option>Todas</option>
+                        <option>13-17</option>
+                        <option>18-24</option>
+                        <option>25-34</option>
+                        <option>35-44</option>
+                        <option>45+</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Localização</label>
+                    <select class="form-control">
+                        <option>Todas</option>
+                        <option>Brasil</option>
+                        <option>América do Sul</option>
+                        <option>América do Norte</option>
+                        <option>Europa</option>
+                        <option>Outros</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Plataformas</label>
+                    <select class="form-control" multiple>
+                        <option selected>Todas</option>
+                        <option>Instagram</option>
+                        <option>Twitter</option>
+                        <option>YouTube</option>
+                        <option>Twitch</option>
+                        <option>Site Oficial</option>
+                        <option>App</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('filterModal')">Cancelar</button>
+                <button class="btn" onclick="applyFilter()">Aplicar Filtros</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="segmentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Criar Novo Segmento</div>
+                <div class="modal-close" onclick="closeModal('segmentModal')">×</div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Nome do Segmento</label>
+                    <input type="text" class="form-control" placeholder="Ex: Fãs Premium">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descrição</label>
+                    <textarea class="form-control" rows="3" placeholder="Descreva o segmento..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Critérios</label>
+                    <div style="margin-bottom: 10px;">
+                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <select class="form-control" style="flex: 1; margin-right: 10px;">
+                                <option>Engajamento</option>
+                                <option>Compras</option>
+                                <option>Tempo como fã</option>
+                                <option>Plataformas</option>
+                                <option>Localização</option>
+                            </select>
+                            <select class="form-control" style="flex: 1; margin-right: 10px;">
+                                <option>maior que</option>
+                                <option>menor que</option>
+                                <option>igual a</option>
+                                <option>contém</option>
+                            </select>
+                            <input type="text" class="form-control" style="flex: 1;" placeholder="Valor">
+                        </div>
+                        <button class="btn" style="width: 100%;">+ Adicionar Critério</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tags (opcional)</label>
+                    <input type="text" class="form-control" placeholder="Ex: Fidelidade, VIP, Alta Conversão">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('segmentModal')">Cancelar</button>
+                <button class="btn" onclick="createSegment()">Criar Segmento</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Page Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.style.display = 'none';
+            });
+            
+            // Show the selected page
+            document.getElementById(pageId).style.display = 'block';
+            
+            // Update active menu item
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Find and activate the clicked menu item
+            const menuItems = document.querySelectorAll('.menu-item');
+            for (let i = 0; i < menuItems.length; i++) {
+                if (menuItems[i].getAttribute('onclick').includes(pageId)) {
+                    menuItems[i].classList.add('active');
+                    break;
+                }
+            }
+        }
+        
+        // Modal Functions
+        function openFilterModal() {
+            document.getElementById('filterModal').style.display = 'flex';
+        }
+        
+        function openSegmentModal() {
+            document.getElementById('segmentModal').style.display = 'flex';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function applyFilter() {
+            // Placeholder for filter functionality
+            closeModal('filterModal');
+            alert('Filtros aplicados com sucesso!');
+        }
+        
+        function createSegment() {
+            // Placeholder for segment creation
+            closeModal('segmentModal');
+            alert('Novo segmento criado com sucesso!');
+        }
+        
+        // Tab Switching in Profile
+        function switchTab(tabElement, contentId) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.detail-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab
+            tabElement.classList.add('active');
+            
+            // Hide all content
+            document.querySelectorAll('.detail-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Show selected content
+            document.getElementById(contentId + '-content').style.display = 'block';
+        }
+        
+        // Fan Profile Navigation
+        function showFanProfile(fanId) {
+            showPage('fan-profiles');
+            // In a real application, this would load the specific fan's data
+        }
+    </script>
+</body>
+</html>
