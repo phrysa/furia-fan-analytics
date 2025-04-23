@@ -1,18 +1,10 @@
 # Know Your Fan - FURIA Analytics
 
-![FURIA Logo](https://i.imgur.com/vFTDDp6.png)
-
 ## 📋 Visão Geral
 
 O **Know Your Fan** é uma plataforma de análise de dados e insights para a FURIA Esports, desenvolvida para entender melhor o comportamento, preferências e padrões de engajamento dos fãs. Este projeto utiliza múltiplas fontes de dados para criar uma visão completa e acionável sobre os fãs da FURIA.
 
 **Desafio:** Criar uma solução que entenda mais sobre o fã da FURIA, usando dados pessoais, redes sociais e interações.
-
-## 🚀 Demonstração
-
-[Assista ao vídeo de demonstração](https://youtu.be/link-para-seu-video)
-
-![Screenshot da aplicação](https://i.imgur.com/placeholder.jpg)
 
 ## 💻 Funcionalidades
 
@@ -52,7 +44,7 @@ O **Know Your Fan** é uma plataforma de análise de dados e insights para a FUR
 
 1. Clone este repositório:
 ```bash
-git clone https://github.com/seu-usuario/furia-fan-analytics.git
+git clone https://github.com/phrysa/furia-fan-analytics.git
 ```
 
 2. Navegue até o diretório do projeto:
@@ -63,8 +55,6 @@ cd furia-fan-analytics
 3. Abra o arquivo `index.html` em qualquer navegador moderno.
 
 ## 📱 Arquitetura da Solução Completa
-
-![Arquitetura](https://i.imgur.com/placeholder2.jpg)
 
 ### Coleta de Dados
 - **Redes Sociais**: Extração de interações, menções e sentimentos
@@ -119,7 +109,7 @@ cd furia-fan-analytics
 
 ## 👥 Autor
 
-- **Seu Nome** - [seu-usuario](https://github.com/seu-usuario)
+- **Felipe de Angelo Cardoso** - [phrysa](https://github.com/phrysa)
 
 ## 📄 Licença
 
